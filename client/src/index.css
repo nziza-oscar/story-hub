@@ -1,0 +1,10 @@
+@import "tailwindcss";
+body{
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.error{
+  @apply py-2 text-red-600 font-bold  bg-red-100 px-3 rounded my-2
+}
