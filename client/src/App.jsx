@@ -6,7 +6,7 @@ import ProfilePage from './pages/ProfilePage'
 import Users from './pages/Users'
 import AppLayout from './pages/AppLayout'
 import MyPosts from './pages/MyPosts'
-
+import User from './pages/User'
 function App() {
   return (
       <Routes>
@@ -16,6 +16,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/posts" element={<MyPosts />} />
             <Route path="/users" element={<Users/>} />
+            <Route path="/users/:slug" element={<User/>} />
 
         </Route>
         <Route path="/login" element={<LoginPage />} />
