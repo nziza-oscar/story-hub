@@ -1,19 +1,41 @@
 const { Comment, Post, User } = require('../models');
+const NotificationService = require("../services/notificationService")
 
 const createComment = async (req, res) => {
   try {
     const { content, post_id } = req.body;
     
     const post = await Post.findByPk(post_id);
+    
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
-
+   const commentor = await User.findByPk(post.user_id)
     const comment = await Comment.create({
       content,
       post_id,
       user_id: req.userId
     });
+
+
+
+    if(post.user_id !== req.userId){
+       const data = {
+              user:commentor.username, 
+              profile: commentor.avatar,
+              email:commentor.email,
+              id:commentor.id
+          }
+    
+          NotificationService.notify({
+            userId:req.userId,
+            notifiableId: post.author.id,
+            notifiableModelName:"User",
+            type:"comment_post",
+            message:`${commentor.username} commented your post.`,
+            data
+          })
+    }
 
     await post.incrementCommentCount();
     
