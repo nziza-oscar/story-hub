@@ -14,19 +14,17 @@ import Notifications from './Notifications'
 import { Link } from 'react-router-dom'
 import useAuthStore from '../store/useAuthStore'
 import useUserStore from '../store/useUserStore'
-import useNotificationStore from '../store/useNotificationStore'
 const TopBar = () => {
   const [activeTab, setActiveTab] = useState('feed')
   const {signout} = useAuthStore()
   const {loading, user, fetchUser} = useUserStore() 
-  const {loading:notLoading, fetchNotification} = useNotificationStore()
-  // const {}
+ 
 
 
 
 useEffect(()=>{
     fetchUser()
-    fetchNotification()
+  
 },[])
   return (
     <div>
@@ -66,7 +64,7 @@ useEffect(()=>{
                       
                       {/* Profile Dropdown */}
                       {
-                        loading && !user? <div className='w-10 h-10 animate-pulse rounded-full bg-gray-400'></div> : <Profile logout={signout} user={user}/>
+                        loading && user? <div className='w-10 h-10 animate-pulse rounded-full bg-gray-400'></div> : <Profile logout={signout} user={user}/>
                       }
                     </div>
                   </div>
