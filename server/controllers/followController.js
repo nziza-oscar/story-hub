@@ -22,13 +22,19 @@ const followUser = async (req, res) => {
 
     
      if(created){
-     
+      const data = {
+          user:follower.username, 
+          profile: follower.avatar,
+          email:follower.email,
+          id:follower.id
+      }
        NotificationService.notify({
         userId,
         notifiableId: req.userId,
         notifiableModelName:"Follow",
         type:"follow_user",
         message: `${follower.username} has started following you.`})
+        data
      }
      
     res.status(created ? 201 : 200).json({
