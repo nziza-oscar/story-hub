@@ -1,20 +1,56 @@
-const { User, Post } = require('../models');
-const {Op} = require("sequelize")
+const { User, Post, Follow } = require('../models');
+const { Op, Sequelize } = require("sequelize");
+
 const getAllUsers = async (req, res) => {
   try {
+    const authUserId = req.userId; // logged in user
+
     const users = await User.findAll({
-      where:{
-        id:{
-          [Op.ne]:req.userId
-        }
+      where: {
+        id: { [Op.ne]: authUserId }
       },
-      attributes: { exclude: ['password'] }
+      attributes: {
+        exclude: ['password'],
+        include: [
+          // Followers count
+          [
+            Sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM "follows"
+              WHERE "follows"."following_id" = "User"."id"
+            )`),
+            "followersCount"
+          ],
+          // Following count
+          [
+            Sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM "follows"
+              WHERE "follows"."follower_id" = "User"."id"
+            )`),
+            "followingCount"
+          ],
+          // Check if logged-in user Follow this user
+          [
+            Sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM "follows"
+              WHERE "follows"."follower_id" = ${req.userId}
+              AND "follows"."following_id" = "User"."id"
+            ) > 0`),
+            "isFollowing"
+          ]
+        ]
+      },
+      order: [["createdAt", "DESC"]]
     });
+
     res.json(users);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 const getUserById = async (req, res) => {
   try {
