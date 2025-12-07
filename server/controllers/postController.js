@@ -162,12 +162,20 @@ const likePost = async (req, res) => {
 
     if (created) {
       await post.incrementLikeCount();
+      const data = {
+          user:liker.username, 
+          profile: liker.avatar,
+          email:liker.email,
+          id:liker.id
+      }
+
       NotificationService.notify({
         userId:req.userId,
         notifiableId: post.author.id,
         notifiableModelName:"User",
         type:"like_post",
-        message:`${liker.username} liked your post.`
+        message:`${liker.username} liked your post.`,
+        data
       })
     }
 
