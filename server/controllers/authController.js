@@ -1,6 +1,6 @@
-const { User, Follow, Post } = require('../models');
+const { User, Follow, Post, Notification } = require('../models');
 const { generateAccessToken, generateRefreshToken, verifyToken } = require('../config/jwt');
-
+const NotificationService = require('../services/notificationService');
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -50,6 +50,10 @@ const login = async (req, res) => {
 const getMe = async (req, res) => {
   try {
     const user = await User.findByPk(req.userId);
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const offset = (page - 1) * limit;
+
     // Count followers
     const followers = await Follow.count({
       where: { following_id: req.userId }
@@ -64,7 +68,17 @@ const getMe = async (req, res) => {
     const posts = await Post.count({
       where: { user_id: req.userId }
     });
-    res.json({ ...user.toSafeObject(), posts, followers , following  });
+    const notification = await Notification.count({
+      where:{user_id:req.userId, is_read:false}
+    })
+
+    const notifications = await NotificationService.getForUserWithNotifiable(
+          req.userId,
+          { limit, offset }
+        );
+
+
+    res.json({ ...user.toSafeObject(), posts, followers , following, notification, notifications  });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
