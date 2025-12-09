@@ -8,19 +8,22 @@ cloudinary.config({
 });
 
 // Upload image to Cloudinary
-const uploadImage = async (file, folder = 'storyHub') => {
-  try {
-    const result = await cloudinary.uploader.upload(file, {
-      folder: folder,
-      resource_type: 'auto'
-    });
-    return {
-      url: result.secure_url,
-      public_id: result.public_id
-    };
-  } catch (error) {
-    throw new Error('Image upload failed');
-  }
+
+const uploadImage = (fileBuffer, fileName = '') => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        public_id: fileName || undefined,
+        resource_type: 'image',
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+
+    stream.end(fileBuffer);
+  });
 };
 
 // Delete image from Cloudinary
