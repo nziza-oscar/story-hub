@@ -20,7 +20,6 @@ const Users = () => {
 
   
 
-  console.log(users)
   return (
     <div>
       <h3 className='text-gray-600 font-bold py-4'>Discover People</h3>
