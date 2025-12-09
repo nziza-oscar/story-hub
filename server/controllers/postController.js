@@ -6,9 +6,24 @@ const NotificationService = require("../services/notificationService")
 
 const getAllPosts = async (req, res) => {
   try {
+    const userId = req.userId
     const posts = await Post.findAll({
       include: [
-        { model: User, as: 'author', attributes: ['id', 'username', 'avatar'] },
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'username', 'avatar']
+        },
+        {
+          model: User,
+          as: 'likedBy',
+          attributes: ['id'],
+          through: {
+            attributes: []
+          },
+          where: { id: userId },
+          required: false  
+        }
       ],
       order: [['createdAt', 'DESC']]
     });
@@ -58,7 +73,7 @@ const createPost = async (req, res) => {
     const slug = generateSlug(title)
 
     if (req.file) {
-      photo_url=uploadImage(req.file)
+      photo_url=await uploadImage(req.file.buffer)
     }
   
     const post = await Post.create({
@@ -169,14 +184,16 @@ const likePost = async (req, res) => {
           id:liker.id
       }
 
-      NotificationService.notify({
-        userId:req.userId,
+      if(post.author.id !== req.userId ){
+        NotificationService.notify({
+        userId:post.author.id,
         notifiableId: post.author.id,
         notifiableModelName:"User",
         type:"like_post",
-        message:`${liker.username} liked your post.`,
+        message:`liked your post.`,
         data
       })
+      }
     }
 
     res.json({ liked: true, count: post.like_count + (created ? 1 : 0), id:req.params.id });
