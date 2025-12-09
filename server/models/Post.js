@@ -27,7 +27,7 @@ const sequelize = require("../config/database")
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
       validate: {
         len: [1, 10000]
       }
