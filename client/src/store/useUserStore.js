@@ -14,8 +14,7 @@ const useUserStore = create((set,get)=>({
         set({loading:true})
           try {
               const { data } = await API.get("auth/me");
-            set({loading:false, user:data, notifications: data.notifications})
-            // console.log(data)
+              set({loading:false, user:data, notifications: data.notifications})
           } catch (error) {
             console.log(error.message)
             set({error: error.response?.data?.error, loading:false})
