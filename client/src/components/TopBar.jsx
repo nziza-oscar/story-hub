@@ -23,9 +23,11 @@ const TopBar = () => {
 
 
 useEffect(()=>{
+    
     fetchUser()
-  
 },[])
+
+
   return (
     <div>
          {/* Top Navigation Bar */}
