@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { FiBell, FiCheck, FiMessageSquare, FiHeart, FiUsers, FiSettings } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import useNotificationStore from '../store/useNotificationStore'
+import moment from 'moment'
 
 const Notifications = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -46,6 +47,7 @@ const Notifications = () => {
        }
  },[notifications])
 
+ console.log(notifications)
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -108,13 +110,13 @@ const Notifications = () => {
                               <span className="font-semibold">{notification.message}</span>
                             ) : (
                               <>
-                                <span className="font-semibold">{notification.user}</span>{' '}
-                                {notification.type === 'like_post' ? 'liked' : 'commented on'} your post{' '}
-                                <span className="font-semibold">"{notification.post}"</span>
+                                <span className="font-semibold">{notification.data.user}</span>
+                                
+                                <span className="font-semibold">"{notification.message}</span>
                               </>
                             )}
                           </p>
-                          <p className="text-sm text-gray-500 mt-1">{notification.time}</p>
+                          <p className="text-sm text-gray-500 mt-1">{moment(notification.createdAt).fromNow()}</p>
                         </div>
 
                         {/* Actions */}
