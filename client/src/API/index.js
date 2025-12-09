@@ -14,5 +14,16 @@ API.interceptors.request.use((config)=>{
     return Promise.reject(error)
 })
 
+API.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("storyhub_token");
+      window.location.href = "/login";
+     console.log(err?.response)
+    }
+    return Promise.reject(err);
+  }
+);
 
 export default API
