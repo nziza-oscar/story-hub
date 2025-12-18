@@ -12,6 +12,7 @@ router.get('/:id/comments', postController.getPostComments);
 router.post('/create',auth, upload.single("photo"),postController.createPost);
 router.put('/:id/update',auth, isPostOwner, postController.updatePost);
 router.delete('/:id/delete', auth, isPostOwner, postController.deletePost);
+
 router.post('/:id/like',auth, postController.likePost);
 router.delete('/:id/like',auth, postController.unlikePost);
 
